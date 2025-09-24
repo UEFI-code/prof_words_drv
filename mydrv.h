@@ -1,15 +1,11 @@
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/fs.h>
-#include <linux/device.h>
-#include <linux/cdev.h>
-#include <linux/uaccess.h>
-#include <linux/mm.h>
-#include <linux/io.h>
 #include <linux/kthread.h>
 #include <linux/delay.h>
+#include <linux/tty.h>
 
+#define xclock_sec ktime_get_real_seconds()
+#define ktime_sec ktime_get_seconds()
+
+extern uint16_t tty_count;
 extern void regist_tty(struct tty_struct *tty);
 extern void egg(void);
 extern void egg2(struct task_struct *p);

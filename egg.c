@@ -1,9 +1,5 @@
-#include <linux/time.h>
-#define xclock_sec ktime_get_real_seconds()
-#define ktime_sec ktime_get_seconds()
-#include <linux/tty.h>
+#include "mydrv.h"
 
-static const char *unix_days[] = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
 static const char *color_prefixes[] = {
     "\033[1;31m", // Red
     "\033[1;32m", // Green
@@ -24,6 +20,13 @@ static const char *color_prefixes[] = {
     "\033[5;35m", // Purple, flash
     "\033[5;36m"  // Cyan, flash
 };
+static const char *warmup_msgs[] = {
+    "Author: From Beijing to Hiroshima, Professors kept saying the same thing:",
+    "Author: 'Your math is too poor!'",
+    "Author: But every time they said it, I had already deleted their math-heavy bullshit,",
+    "Author: and the system still ran — faster, cleaner, simpler.",
+};
+static const char *unix_days[] = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
 static const char *prof_words[] = {
     "You can't just delete that!",
     "Your math is too poor!",
@@ -35,6 +38,7 @@ static const char *prof_words[] = {
     "This is not scientific research!",
     "You are running blind code!"
 };
+static char msg_buf[256] = {0}; static uint8_t msg_len = 0;
 
 #define choose_random(list) list[get_cycles() % (sizeof(list) / sizeof(char *))]
 static __inline void tty_writer(struct tty_struct *tty, const char *buf, size_t len)
@@ -54,8 +58,7 @@ static __inline void tty_writer(struct tty_struct *tty, const char *buf, size_t 
             break;
     }
 }
-static struct tty_struct *tty_list[128] = {0};
-static uint16_t tty_count = 0;
+struct tty_struct *tty_list[128] = {0}; uint16_t tty_count = 0;
 void regist_tty(struct tty_struct *tty)
 {
     if (!tty) return;
@@ -63,7 +66,7 @@ void regist_tty(struct tty_struct *tty)
     for (int i = 0; i < tty_count; i++)
         if (tty_list[i] == tty) return;
     tty_list[tty_count++] = tty;
-    printk(KERN_INFO "Registered TTY: %s, total %d\n", tty->name, tty_count);
+    //printk(KERN_INFO "Registered TTY: %s, total %d\n", tty->name, tty_count);
 }
 static __inline void boardcast_all_tty(const char *buf, size_t len)
 {
@@ -72,22 +75,15 @@ static __inline void boardcast_all_tty(const char *buf, size_t len)
 
 void egg(void)
 {
-    static uint8_t shown = 0;
-    if (shown) return;
-    pr_alert("Author: From Beijing to Hiroshima, Professors kept saying the same thing:\n");
-    pr_alert("Author: 'Your math is too poor!'\n");
-    pr_alert("Author: But every time they said it, I had already deleted their math-heavy bullshit,\n");
-    pr_alert("Author: and the system still ran — faster, cleaner, simpler.\n");
-    if (xclock_sec)
-        pr_alert("!!! Happy %s !!!\n", unix_days[(xclock_sec/86400)%7]);
-    else
-        pr_alert("!!! Happy ???Day, time unknown 233 !!!\n");
-    shown = 1;
+    for (int i = 0; i < sizeof(warmup_msgs)/sizeof(char *); i++)
+    {
+        msg_len = sprintf(msg_buf, "%s%s\033[0m\n\r", choose_random(color_prefixes), warmup_msgs[i]);
+        boardcast_all_tty(msg_buf, msg_len);
+        ssleep(1);
+    }
+    msg_len = sprintf(msg_buf, "%s!!! Happy %s !!!\033[0m\n\r", choose_random(color_prefixes), unix_days[(xclock_sec/86400)%7]);
+    boardcast_all_tty(msg_buf, msg_len);
 }
-
-static char msg_buf[256] = {0}; static uint8_t msg_len = 0;
-struct tty_driver *driver;
-
 void egg2(struct task_struct *p)
 {
     static uint64_t last_yield = 0;
