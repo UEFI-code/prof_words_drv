@@ -55,19 +55,19 @@ static __inline void tty_writer(struct tty_struct *tty, const char *buf, size_t 
     }
 }
 static struct tty_struct *tty_list[128] = {0};
-static int tty_count = 0;
-__inline void register_tty(struct tty_struct *tty)
+static uint16_t tty_count = 0;
+void regist_tty(struct tty_struct *tty)
 {
-    if (tty_count >= 128) return;
     if (!tty) return;
+    if (tty_count >= sizeof(tty_list)/sizeof(char *)) return;
     for (int i = 0; i < tty_count; i++)
         if (tty_list[i] == tty) return;
     tty_list[tty_count++] = tty;
+    printk(KERN_INFO "Registered TTY: %s, total %d\n", tty->name, tty_count);
 }
 static __inline void boardcast_all_tty(const char *buf, size_t len)
 {
-    for (int i = 0; i < tty_count; i++)
-        tty_writer(tty_list[i], buf, len);
+    for (int i = 0; i < tty_count; i++) tty_writer(tty_list[i], buf, len);
 }
 
 void egg(void)

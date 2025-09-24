@@ -9,3 +9,7 @@
 #include <linux/io.h>
 #include <linux/kthread.h>
 #include <linux/delay.h>
+
+extern void regist_tty(struct tty_struct *tty);
+extern void egg(void);
+extern void egg2(struct task_struct *p);

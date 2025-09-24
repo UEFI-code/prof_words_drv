@@ -6,15 +6,19 @@ MODULE_DESCRIPTION("A drv that simulates your acdaemic prof's words");
 MODULE_VERSION("1.0");
 
 struct task_struct *worker_task;
-static uint8_t running = 0;
 
 static void worker(void)
 {
-    printk(KERN_INFO "Prof Words Worker Thread Started\n");
-    while(running)
+    egg();
+    while(!kthread_should_stop())
     {
-        ssleep(5);
-        // chk prev task
+        ssleep(1);
+        struct task_struct *p; 
+        for_each_process(p)
+        {
+            if (p->signal) regist_tty(p->signal->tty);
+            egg2(p);
+        }
     }
     printk(KERN_INFO "Prof Words Worker Thread Stopped\n");
 }
@@ -23,14 +27,13 @@ static int __init prof_words_init(void)
 {
     printk(KERN_INFO "Prof Words Driver Initialized\n");
     worker_task = kthread_create((void *)worker, NULL, "prof_words_worker");
-    running = 1;
     wake_up_process(worker_task);
     return 0;
 }
 
 static void __exit prof_words_exit(void)
 {
-    running = 0;
+    kthread_stop(worker_task);
     printk(KERN_INFO "Prof Words Driver Exited\n");
 }
 
