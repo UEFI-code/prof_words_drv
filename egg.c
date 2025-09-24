@@ -79,7 +79,6 @@ void egg(void)
     {
         msg_len = sprintf(msg_buf, "%s%s\033[0m\n\r", choose_random(color_prefixes), warmup_msgs[i]);
         boardcast_all_tty(msg_buf, msg_len);
-        //ssleep(1);
     }
     msg_len = sprintf(msg_buf, "%s!!! Happy %s !!!\033[0m\n\r", choose_random(color_prefixes), unix_days[(xclock_sec/86400)%7]);
     boardcast_all_tty(msg_buf, msg_len);

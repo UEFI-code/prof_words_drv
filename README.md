@@ -43,18 +43,9 @@ make install
 
 **Example output:**
 ```
-⚠️  Warning from Prof with node(PID=971): This is not scientific research!
-🔴 Prof was ANGRY with systemd(PID=1): Your math is too poor!
+⚠️ Warning from Prof with python3(PID=253): Go back and study linear algebra!
+🔴 Prof was ANGRY with systemd(PID=1): Without the formula, it's meaningless!
 ```
-
-## 😈 Professor's Arsenal
-
-Your kernel professor is armed with classics like:
-- 📐 *"Your math is too poor!"*
-- 🧪 *"This is not scientific research!"*  
-- 🔍 *"You are running blind code!"*
-
-And many more... 😱
 
 ## 🎨 Features That Will Blow Your Mind
 

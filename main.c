@@ -30,7 +30,6 @@ static void worker(void)
 static __init int prof_words_init(void)
 {
     printk(KERN_INFO "Prof Words Driver Initialized\n");
-    
     worker_task = kthread_create((void *)worker, NULL, "prof_words_worker");
     wake_up_process(worker_task);
     return 0;
