@@ -41,23 +41,6 @@ static const char *prof_words[] = {
 static char msg_buf[256] = {0}; static uint8_t msg_len = 0;
 
 #define choose_random(list) list[get_cycles() % (sizeof(list) / sizeof(char *))]
-static __inline void tty_writer(struct tty_struct *tty, const char *buf, size_t len)
-{
-    switch(tty->driver->type) {
-        case TTY_DRIVER_TYPE_SERIAL:
-            for (size_t i = 0; i < len; i++)
-                tty->ops->put_char(tty, buf[i]); // no flush, to prevent hardware corruption
-            break;
-        case TTY_DRIVER_TYPE_CONSOLE:
-        case TTY_DRIVER_TYPE_PTY:
-            if (tty && tty->ops && tty->ops->write)
-                tty->ops->write(tty, buf, len);
-            break;
-        default:
-            pr_alert("tty_writer: unknown %s type %d\n", tty->name, tty->driver->type);
-            break;
-    }
-}
 struct tty_struct *tty_list[128] = {0}; uint16_t tty_count = 0;
 void regist_tty(struct tty_struct *tty)
 {
@@ -70,7 +53,7 @@ void regist_tty(struct tty_struct *tty)
 }
 static __inline void boardcast_all_tty(const char *buf, size_t len)
 {
-    for (int i = 0; i < tty_count; i++) tty_writer(tty_list[i], buf, len);
+    for (int i = 0; i < tty_count; i++) tty_list[i]->ops->write(tty_list[i], buf, len);
 }
 
 void egg(void)
@@ -91,7 +74,7 @@ void egg2(struct task_struct *p)
     if (p->signal && p->signal->tty)
     {
         msg_len = sprintf(msg_buf, "\033[1;33mWarning from Prof with %s(PID=%lld):\033[0m %s%s\033[0m\n\r", p->comm, p->pid, choose_random(color_prefixes), choose_random(prof_words));
-        tty_writer(p->signal->tty, msg_buf, msg_len);
+        p->signal->tty->ops->write(p->signal->tty, msg_buf, msg_len);
     }
     else
     {
