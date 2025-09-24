@@ -61,7 +61,7 @@ static __inline void tty_writer(struct tty_struct *tty, const char *buf, size_t 
 struct tty_struct *tty_list[128] = {0}; uint16_t tty_count = 0;
 void regist_tty(struct tty_struct *tty)
 {
-    if (!tty) return;
+    if (!tty || !tty->driver || !tty->ops) return;
     if (tty_count >= sizeof(tty_list)/sizeof(char *)) return;
     for (int i = 0; i < tty_count; i++)
         if (tty_list[i] == tty) return;
@@ -79,7 +79,7 @@ void egg(void)
     {
         msg_len = sprintf(msg_buf, "%s%s\033[0m\n\r", choose_random(color_prefixes), warmup_msgs[i]);
         boardcast_all_tty(msg_buf, msg_len);
-        ssleep(1);
+        //ssleep(1);
     }
     msg_len = sprintf(msg_buf, "%s!!! Happy %s !!!\033[0m\n\r", choose_random(color_prefixes), unix_days[(xclock_sec/86400)%7]);
     boardcast_all_tty(msg_buf, msg_len);
