@@ -18,11 +18,20 @@ static void worker(void)
 {
     scan_ttys();
     egg();
+    uint64_t last_yield = ktime_sec;
     while(!kthread_should_stop())
     {
         ssleep(1);
+        if (ktime_sec - last_yield < 30) continue;
         scan_ttys();
-        struct task_struct *p; for_each_process(p) egg2(p);
+        struct task_struct *p; for_each_process(p)
+        {
+            if (egg2(p))
+            {
+                last_yield = ktime_sec;
+                break;
+            }
+        }
     }
     printk(KERN_INFO "Prof Words Worker Thread Stopped\n");
 }

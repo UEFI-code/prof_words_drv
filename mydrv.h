@@ -8,4 +8,4 @@
 extern uint16_t tty_count;
 extern void regist_tty(struct tty_struct *tty);
 extern void egg(void);
-extern void egg2(struct task_struct *p);
+extern uint8_t egg2(struct task_struct *p);

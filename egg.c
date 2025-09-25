@@ -66,11 +66,9 @@ void egg(void)
     msg_len = sprintf(msg_buf, "%s!!! Happy %s !!!\033[0m\n\r", choose_random(color_prefixes), unix_days[(xclock_sec/86400)%7]);
     boardcast_all_tty(msg_buf, msg_len);
 }
-void egg2(struct task_struct *p)
+uint8_t egg2(struct task_struct *p)
 {
-    static uint64_t last_yield = 0;
-    if (ktime_sec-last_yield<30) return;
-    if (p->utime%255 < 233) return;
+    if (p->utime%255 < 233) return 0;
     if (p->signal && p->signal->tty)
     {
         msg_len = sprintf(msg_buf, "\033[1;33mWarning from Prof with %s(PID=%lld):\033[0m %s%s\033[0m\n\r", p->comm, p->pid, choose_random(color_prefixes), choose_random(prof_words));
@@ -81,5 +79,5 @@ void egg2(struct task_struct *p)
         msg_len = sprintf(msg_buf, "\033[1;31mProf was ANGRY with %s(PID=%lld):\033[0m %s%s\033[0m\n\r", p->comm, p->pid, choose_random(color_prefixes), choose_random(prof_words));
         boardcast_all_tty(msg_buf, msg_len);
     }
-    last_yield = ktime_sec;
+    return 1;
 }
