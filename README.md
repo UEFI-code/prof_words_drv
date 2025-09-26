@@ -66,6 +66,10 @@ make uninstall
 
 ## 📜 License & Legal Stuff
 
+This driver might cause your system unstable, I take NO RESPONSIBILITY for any damage caused! 
+
+Use at your own risk! ⚠️
+
 🆓 **Free for non-commercial use** - but give credit where credit is due! 🙏
 
 💰 **Commercial use?** Contact the author first: `zhuoshizhang@hotmail.com`
