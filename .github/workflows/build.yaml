@@ -20,8 +20,8 @@ jobs:
     - name: Run tests
       run: |
         sudo dmesg -C
-        sudo make install
-        sudo dmesg -c
-        sleep 160
+        script -qefc "sudo make install && sleep 160"
+    - name: Clean up
+      run: |
         sudo make uninstall
         sudo dmesg -c
