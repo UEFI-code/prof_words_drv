@@ -10,7 +10,7 @@ static const char *color_prefixes[] = {
     "\033[4;33m", // Yellow, underline
     "\033[4;34m", // Blue, underline
     "\033[4;35m", // Purple, underline
-    "\033[4;36m"  // Cyan, underline
+    "\033[4;36m", // Cyan, underline
     "\033[5;31m", // Red, flash
     "\033[5;32m", // Green, flash
     "\033[5;33m", // Yellow, flash
