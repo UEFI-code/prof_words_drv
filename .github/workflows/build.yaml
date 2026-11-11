@@ -19,6 +19,9 @@ jobs:
       run: make
     - name: Run tests
       run: |
+        sudo dmesg -C
         sudo make install
+        sudo dmesg -c
         sleep 160
         sudo make uninstall
+        sudo dmesg -c
